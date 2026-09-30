@@ -1,0 +1,53 @@
+name: Windows release draft
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to build
+        required: true
+        default: v0.2.0
+permissions:
+  contents: write
+concurrency:
+  group: windows-release-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ inputs.tag }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Check version and syntax
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          $package = Get-Content -LiteralPath package.json -Raw | ConvertFrom-Json
+          if ($env:RELEASE_TAG -ne ('v' + $package.version)) { throw 'Tag does not match package version.' }
+          Get-ChildItem -LiteralPath src -File | Where-Object { $_.Extension -in @('.cjs','.js') } | ForEach-Object {
+            node --check $_.FullName
+            if ($LASTEXITCODE -ne 0) { throw 'Syntax check failed.' }
+          }
+      - run: npm ci
+      - run: npm run package:windows
+      - name: Create checksums and draft
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          $assets = @(Get-ChildItem -LiteralPath portable-build -Filter *.exe -File)
+          if ($assets.Count -ne 2) { throw 'Expected portable and installer files.' }
+          $hashes = $assets | ForEach-Object { (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() + '  ' + $_.Name }
+          $hashes | Set-Content -LiteralPath portable-build/SHA256SUMS.txt -Encoding utf8
+          $paths = @($assets.FullName) + 'portable-build/SHA256SUMS.txt'
+          gh release create $env:RELEASE_TAG @paths --draft --prerelease --verify-tag --title ('Research Desk ' + $env:RELEASE_TAG) --notes-file docs/RELEASE_NOTES.md
+          if ($LASTEXITCODE -ne 0) { throw 'Draft creation failed. Inspect existing release before retrying; do not overwrite published assets.' }
