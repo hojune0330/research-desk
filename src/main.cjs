@@ -44,7 +44,8 @@ async function job(kind, id, work) {
 }
 function extract(data, signal) {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(path.join(__dirname, 'extractor.cjs'), { workerData: data, resourceLimits: { maxOldGenerationSizeMb: 192 } }); let settled = false;
+    const workerFile = app.isPackaged ? path.join(process.resourcesPath, 'app.asar.unpacked', 'src', 'extractor.cjs') : path.join(__dirname, 'extractor.cjs');
+    const worker = new Worker(workerFile, { workerData: data, resourceLimits: { maxOldGenerationSizeMb: 192 } }); let settled = false;
     const done = (error, value) => { if (settled) return; settled = true; clearTimeout(timer); signal?.removeEventListener('abort', cancel); worker.terminate(); error ? reject(error) : resolve(value); };
     const cancel = () => done(new Error('작업을 중지했습니다.'));
     const timer = setTimeout(() => done(new Error('추출 시간이 초과되었습니다. 파일을 나누어 주세요.')), 45_000);

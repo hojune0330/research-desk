@@ -24,7 +24,7 @@
     "directories": { "output": "portable-build" },
     "files": ["src/**/*", "package.json", "PRIVACY.md", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_LICENSES.txt", "LICENSE"],
     "asar": true,
-    "asarUnpack": ["node_modules/@napi-rs/canvas/**/*"],
+    "asarUnpack": ["src/extractor.cjs", "node_modules/**/*"],
     "win": {
       "target": [{"target": "portable", "arch": ["x64"]}, {"target": "nsis", "arch": ["x64"]}]
     },
