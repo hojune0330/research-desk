@@ -8,6 +8,8 @@
 
 이 저장소의 구현 상태와 확인 범위는 [릴리스 상태](docs/RELEASE_STATUS.md)에 기록합니다.
 
+[Windows 앱 다운로드](https://github.com/hojune0330/research-desk/releases/tag/v0.2.0) · [공개 소스](https://github.com/hojune0330/research-desk)
+
 ## 사용 방법
 
 1. 자료 추가를 누르거나 파일·폴더를 앱에 놓습니다. TXT, MD, CSV, HTML, 텍스트 PDF, DOCX를 지원합니다. URL과 텍스트를 붙여넣어도 됩니다.
@@ -51,4 +53,4 @@ npm run package:windows
 
 설치 파일과 무설치 실행 파일은 portable-build에 생성됩니다. 설치는 사용자 계정 단위이며 제거해도 자료함을 자동 삭제하지 않습니다. 0.2.0 배포 파일은 서명되지 않았으므로 Windows가 경고할 수 있습니다. 파일 해시는 릴리스의 SHA256SUMS.txt에서 확인하세요.
 
-공개본에는 개인 키·자료·색인·대화가 포함되지 않습니다. 타사 라이선스는 [고지](THIRD_PARTY_NOTICES.md)와 THIRD_PARTY_LICENSES.txt를 따릅니다. 프로젝트 자체의 권리는 LICENSE에 명시합니다.
+공개본에는 개인 키·자료·색인·대화가 포함되지 않습니다. 프로젝트 소스는 [MIT 라이선스](LICENSE)로 공개합니다. 타사 라이선스는 [고지](THIRD_PARTY_NOTICES.md)와 THIRD_PARTY_LICENSES.txt를 따릅니다.

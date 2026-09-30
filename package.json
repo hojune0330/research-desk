@@ -2,6 +2,7 @@
   "name": "jev-research-desk",
   "version": "0.2.0",
   "private": true,
+  "license": "MIT",
   "description": "A Windows material library with local search and source-grounded OpenAI chat.",
   "main": "src/main.cjs",
   "author": "Research Desk contributors",
